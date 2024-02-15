@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/contactMessages")
@@ -44,5 +46,29 @@ public class ContactMessageController {
     @DeleteMapping("/deleteById/{contactMessageId}") // http://localhost:8080/contactMessages/deleteById/2 + DELETE
     public ResponseEntity<String> deleteByIdPath(@PathVariable Long contactMessageId){
         return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId));
+    }
+
+    @DeleteMapping("/deleteByIdParam")//http://localhost:8080/contactMessages/deleteByIdParam?contactMessageId=2
+    public ResponseEntity<String> deleteById(@RequestParam(value = "contactMessageId") Long contactMessageId){
+        return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId));
+    }
+    @GetMapping("/searcBetweeenDates")//http://localhost:8080/contactMessages/searchBetweenDates?beginDate=2023-09-13&endDate=2023-09-15   + GET
+    public ResponseEntity<List<ContactMessage>> searchBetweenDate(
+            @RequestParam(value = "beginDate") String begindateString,
+            @RequestParam(value = "endDate") String endDateString
+    ){
+        List<ContactMessage> contactMessage = contactMessageService.searchBetweenDates(begindateString, endDateString);
+        return ResponseEntity.ok(contactMessage);
+    }
+
+    @GetMapping("/searchBetweenTimes")//http://localhost:8080/contactMessages/searchBetweenTimes?startHour=09&startMinute=00&endHour=17&endMinute=30  + GET
+    public ResponseEntity<List<ContactMessage>> searchBetweenTimes(
+            @RequestParam(value = "startHour") String startHourString,
+            @RequestParam(value = "startMinute") String startMinuteString,
+            @RequestParam(value = "endHour") String endHourString,
+            @RequestParam(value = "endMinute") String endMinuteString
+    ){
+        List<ContactMessage> contactMessages = contactMessageService.searchBetweenTimes(startHourString, startMinuteString, endHourString, endMinuteString);
+        return ResponseEntity.ok(contactMessages);
     }
 }
