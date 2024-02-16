@@ -74,7 +74,7 @@ public class ContactMessageService {
         return Messages.CONTACT_MESSAGE_DELETED_SUCCESSFULLY;
     }
 
-    private ContactMessage getContactMessageById(Long id) {
+    public ContactMessage getContactMessageById(Long id) {
         return contactMessageRepository.findById(id).orElseThrow(()->
                 new RessourceNotFoundException(Messages.NOT_FOUND_MESSAGE));
     }
