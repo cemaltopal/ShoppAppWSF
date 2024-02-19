@@ -2,6 +2,8 @@ package com.project.entity.concretes.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.entity.enums.Address;
+import com.project.entity.enums.BankCard;
 import com.project.entity.enums.Gender;
 import lombok.*;
 
@@ -49,6 +51,11 @@ public class User {
     private boolean isActive;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    @Embedded
+    private BankCard bankCard;
+    @Embedded
+    private Address address;
+
 
     @OneToMany
 
