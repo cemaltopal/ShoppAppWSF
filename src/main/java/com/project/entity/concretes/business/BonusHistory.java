@@ -9,28 +9,24 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder = true)
-public class PurchasedProductHistory {
+public class BonusHistory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productHistoryId;
+    private Long bonusHistoryId;
 
-    @ManyToMany
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_Id")
     private User customer;
-
-    @ManyToMany
-    @JoinTable(name = "Purchased_Product",
-    joinColumns = @JoinColumn(name = "product_history_id"),
-    inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> allProduct;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDate transactionDate;
+
+    private double amount;
 }

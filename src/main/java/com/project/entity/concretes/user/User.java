@@ -1,14 +1,17 @@
 package com.project.entity.concretes.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.entity.enums.Address;
-import com.project.entity.enums.BankCard;
+import com.project.entity.concretes.business.BalanceHistory;
+import com.project.entity.concretes.business.BonusHistory;
+import com.project.entity.concretes.business.PurchasedProductHistory;
 import com.project.entity.enums.Gender;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "t_user")
@@ -56,7 +59,21 @@ public class User {
     @Embedded
     private Address address;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    private List<BalanceHistory> balanceHistories;
 
-    @OneToMany
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.REMOVE)
+    private List<BonusHistory> bonusHistories;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    private List<PurchasedProductHistory> purchasedProductHistories;
+
+    @OneToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private UserRole userRole;
+
 
 }

@@ -1,7 +1,13 @@
 package com.project.service;
 
+import com.project.entity.concretes.user.User;
+import com.project.exception.BadRequestException;
+import com.project.payload.mappers.UserMapper;
+import com.project.payload.messages.ErrorMessages;
 import com.project.payload.request.authentication.LoginRequest;
+import com.project.payload.request.business.UpdatePasswordRequest;
 import com.project.payload.response.authentication.AuthResponse;
+import com.project.payload.response.user.UserResponse;
 import com.project.repository.user.UserRepository;
 import com.project.security.jwt.JwtUtils;
 import com.project.security.service.UserDetailsImpl;
@@ -12,8 +18,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,6 +33,8 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<AuthResponse> authenticateUser(LoginRequest loginRequest) {
         //!!! Gelen requestin icinden kullanici adi ve parola bilgisi aliniyor
@@ -58,5 +68,24 @@ public class AuthenticationService {
         role.ifPresent(authResponse::role);
 
         return  ResponseEntity.ok(authResponse.build());
+    }
+
+    public UserResponse findByUsername(String username) {
+        return userMapper.mapUserToUserResponse(userRepository.findByUsernameEquals(username));
+    }
+
+    public void updatePassword(UpdatePasswordRequest updatePasswordRequest, HttpServletRequest request) {
+        String userName = (String) request.getAttribute("username");
+        User user = userRepository.findByUsernameEquals(userName);
+
+        if (Boolean.TRUE.equals(user.getBuilt_in())){
+            throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+        if (!passwordEncoder.matches(updatePasswordRequest.getOldPassword(),user.getPassword())){
+            throw new BadRequestException(ErrorMessages.PASSWORD_NOT_MATCHED);
+        }
+        String hashedPassword =passwordEncoder.encode(updatePasswordRequest.getNewPassword());
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
     }
 }

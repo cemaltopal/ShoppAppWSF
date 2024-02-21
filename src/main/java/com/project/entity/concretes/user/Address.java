@@ -1,5 +1,8 @@
-package com.project.entity.enums;
+package com.project.entity.concretes.user;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Address {
 
     private Long id;

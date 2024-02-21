@@ -1,4 +1,4 @@
-package com.project.entity.enums;
+package com.project.entity.concretes.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
