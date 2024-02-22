@@ -3,8 +3,8 @@ package com.project.entity.enums;
 public enum RoleType {
     ADMIN("Admin"),
     CUSTOMER("Customer"),
-    GUEST("Guest"),
-    ACCOUNTANT("Accountant");
+    GUEST_CUSTOMER("GuestCustomer");
+
 
     public String name;
 

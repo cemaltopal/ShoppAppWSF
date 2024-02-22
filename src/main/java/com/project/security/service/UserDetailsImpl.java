@@ -21,7 +21,6 @@ public class UserDetailsImpl implements UserDetails {
     private Long id;
     private String username;
     private String name;
-    private Boolean isAdvisor;
     @JsonIgnore
     private String password;
     private String ssn;
@@ -32,7 +31,6 @@ public class UserDetailsImpl implements UserDetails {
         this.id = id;
         this.username = username;
         this.name = name;
-        this.isAdvisor = isAdvisor;
         this.password = password;
         this.ssn = ssn;
 

@@ -27,7 +27,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/user")// http://localhost:8080/auth/user + GET
-    @PreAuthorize(("hasAnyAuthority('ADMIN','CUSTOMER','GUEST','ACCOUNTANT')"))
+    @PreAuthorize(("hasAnyAuthority('ADMIN','CUSTOMER','GUEST')"))
     public ResponseEntity<UserResponse> findByUsername(HttpServletRequest request){
         String username = (String) request.getAttribute("username");
         UserResponse userResponse = authenticationService.findByUsername(username);
@@ -35,7 +35,7 @@ public class AuthenticationController {
     }
 
     @PatchMapping("/updatePassword")// http://localhost:8080/auth/updatePassword + Patch + JSON
-    @PreAuthorize(("hasAnyAuthority('ADMIN','CUSTOMER','GUEST','ACCOUNTANT')"))
+    @PreAuthorize(("hasAnyAuthority('ADMIN','CUSTOMER','GUEST')"))
     public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest,
                                                  HttpServletRequest request){
         authenticationService.updatePassword(updatePasswordRequest, request);

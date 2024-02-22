@@ -24,4 +24,5 @@ public class BaseUserResponse {
     private String phoneNumber;
     private LocalDate birthDay;
     private Gender gender;
+
 }
