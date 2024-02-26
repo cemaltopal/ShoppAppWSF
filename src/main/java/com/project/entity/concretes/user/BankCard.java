@@ -7,8 +7,7 @@ import java.time.LocalDate;
 
 @Embeddable
 public class BankCard {
-    private Long id;
-    private String name;
+    private String cardName;
     private String cardNumber;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate expirationDate;

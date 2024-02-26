@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -45,5 +46,17 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseMessage<BaseUserResponse> getUserById(@PathVariable Long userId){
         return userService.getUserById(userId);
+    }
+
+    @DeleteMapping("/delete/{id}")// http://localhost:8080/user/delete/3
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id, HttpServletRequest httpServletRequest){
+        return ResponseEntity.ok(userService.deleteUserById(id,httpServletRequest));
+    }
+
+    @PutMapping("/update/{userId}")// http://localhost:8080/user/update/1 + PUT + JSON
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseMessage<BaseUserResponse> updateAdminManagerForAdmin(@RequestBody @Valid UserRequest userRequest,
+                                                                        @PathVariable Long userId){
+        return userService.updateUser(userRequest, userId);
     }
 }

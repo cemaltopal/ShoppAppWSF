@@ -1,7 +1,10 @@
 package com.project.service.validator;
 
+import com.project.entity.concretes.user.User;
 import com.project.exception.ConflictException;
 import com.project.payload.messages.ErrorMessages;
+import com.project.payload.request.abstracts.AbstractUserRequest;
+import com.project.payload.request.user.UserRequest;
 import com.project.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -27,5 +30,33 @@ public class UniquePropertyValidator {
             throw new ConflictException(String.format(ErrorMessages.ALREADY_REGISTER_MESSAGE_EMAIL, email));
         }
 
+    }
+
+    public void checkUniqueProperties(User user, AbstractUserRequest abstractUserRequest) {
+        String updatedUsername="";
+        String updatedSsn="";
+        String updatedPhone="";
+        String updatedEmail="";
+        boolean isChanged= false;
+
+        if (!user.getUsername().equalsIgnoreCase(abstractUserRequest.getUsername())){
+            updatedUsername = abstractUserRequest.getUsername();
+            isChanged = true;
+        }
+        if (!user.getSsn().equalsIgnoreCase(abstractUserRequest.getSsn())){
+            updatedSsn = abstractUserRequest.getSsn();
+            isChanged = true;
+        }
+        if (!user.getPhoneNumber().equalsIgnoreCase(abstractUserRequest.getPhoneNumber())){
+            updatedPhone = abstractUserRequest.getPhoneNumber();
+            isChanged = true;
+        }
+        if (!user.getEmail().equalsIgnoreCase(abstractUserRequest.getEmail())){
+            updatedEmail = abstractUserRequest.getEmail();
+            isChanged =true;
+        }
+        if(isChanged){
+            checkDuplicate(updatedUsername,updatedSsn,updatedPhone, updatedEmail);
+        }
     }
 }

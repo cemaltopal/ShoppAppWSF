@@ -21,7 +21,7 @@ public class PurchasedProductHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productHistoryId;
 
-    @ManyToMany
+    @ManyToOne //Bunu değiştirdim önce manytomany idi.
     @JoinColumn(name = "user_id")
     private User customer;
 

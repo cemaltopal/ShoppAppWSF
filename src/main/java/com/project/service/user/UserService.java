@@ -2,6 +2,7 @@ package com.project.service.user;
 
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.RoleType;
+import com.project.exception.BadRequestException;
 import com.project.exception.RessourceNotFoundException;
 import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.ErrorMessages;
@@ -11,6 +12,7 @@ import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.payload.response.user.UserResponse;
 import com.project.repository.user.UserRepository;
+import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
 import com.project.service.validator.UniquePropertyValidator;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @Service
@@ -32,6 +35,7 @@ public class UserService {
     private final UserRoleService userRoleService;
     private final PasswordEncoder passwordEncoder;
     private final PageableHelper pageableHelper;
+    private final MethodHelper methodHelper;
 
 
     public ResponseMessage<UserResponse> saveUser(UserRequest userRequest, String userRole) {
@@ -86,6 +90,40 @@ public class UserService {
                 .message(SuccessMessages.USER_FOUND)
                 .httpStatus(HttpStatus.OK)
                 .object(baseUserResponse)
+                .build();
+    }
+
+    public String deleteUserById(Long id, HttpServletRequest request) {
+
+        User user = methodHelper.isUserExist(id);
+        String userName = (String) request.getAttribute("username");
+        User user2 = userRepository.findByUsernameEquals(userName);
+
+        if (Boolean.TRUE.equals(user.getBuilt_in())){
+            throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
+        } else if (user2.getUserRole().getRoleType() == RoleType.MANAGER) {
+            if (!(user.getUserRole().getRoleType() == RoleType.CUSTOMER) ||
+                    (user.getUserRole().getRoleType() == RoleType.GUEST_CUSTOMER)){
+            throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+    }
+        userRepository.deleteById(id);
+            return SuccessMessages.USER_DELETE;
+        }
+
+    public ResponseMessage<BaseUserResponse> updateUser(UserRequest userRequest, Long userId) {
+        User user = methodHelper.isUserExist(userId);
+        methodHelper.checkBuiltIn(user);
+        uniquePropertyValidator.checkUniqueProperties(user, userRequest);
+        User uptadedUser = userMapper.mapUserRequestToUpdatedUser(userRequest, userId);
+        uptadedUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        uptadedUser.setUserRole(user.getUserRole());
+        User savedUser = userRepository.save(uptadedUser);
+
+        return ResponseMessage.<BaseUserResponse>builder()
+                .message(SuccessMessages.USER_UPDATE_MESSAGE)
+                .httpStatus(HttpStatus.OK)
+                .object(userMapper.mapUserToUserResponse(savedUser))
                 .build();
     }
 }
