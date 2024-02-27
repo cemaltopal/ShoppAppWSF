@@ -1,6 +1,7 @@
 package com.project.controller.user;
 
 import com.project.payload.request.user.UserRequest;
+import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.payload.response.user.UserResponse;
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/getAllUserByPage/{userRole}") // http://localhost:8080/user/getAllUserByPage/Admin
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<Page<UserResponse>> getUserByPage(
             @PathVariable String userRole,
             @RequestParam(value = "page",defaultValue = "0") int page,
@@ -43,20 +44,28 @@ public class UserController {
     }
 
     @GetMapping("/getUserById/{userId}")// http://localhost:8080/user/getUserById/1 + GET
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseMessage<BaseUserResponse> getUserById(@PathVariable Long userId){
         return userService.getUserById(userId);
     }
 
     @DeleteMapping("/delete/{id}")// http://localhost:8080/user/delete/3
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<String> deleteUserById(@PathVariable Long id, HttpServletRequest httpServletRequest){
         return ResponseEntity.ok(userService.deleteUserById(id,httpServletRequest));
     }
 
     @PutMapping("/update/{userId}")// http://localhost:8080/user/update/1 + PUT + JSON
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseMessage<BaseUserResponse> updateAdminManagerForAdmin(@RequestBody @Valid UserRequest userRequest,
                                                                         @PathVariable Long userId){
         return userService.updateUser(userRequest, userId);
+    }
+    @PatchMapping("/updateUser")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER''CUSTOMER')")
+    public ResponseEntity<String> updateUser(@RequestBody @Valid UserRequestWithoutPassword userRequestWithoutPassword,
+                                             HttpServletRequest request){
+        return userService.updateUserForUsers(userRequestWithoutPassword, request);
+
     }
 }

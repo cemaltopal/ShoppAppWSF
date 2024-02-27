@@ -8,6 +8,7 @@ import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.user.UserRequest;
+import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.payload.response.user.UserResponse;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -125,5 +127,14 @@ public class UserService {
                 .httpStatus(HttpStatus.OK)
                 .object(userMapper.mapUserToUserResponse(savedUser))
                 .build();
+    }
+
+    public ResponseEntity<String> updateUserForUsers(UserRequestWithoutPassword userRequestWithoutPassword,
+                                                     HttpServletRequest request) {
+        String userName = (String) request.getAttribute("username");
+        User user = userRepository.findByUsernameEquals(userName);
+
+        methodHelper.checkBuiltIn(user);
+
     }
 }
