@@ -25,7 +25,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -129,12 +132,35 @@ public class UserService {
                 .build();
     }
 
-    public ResponseEntity<String> updateUserForUsers(UserRequestWithoutPassword userRequestWithoutPassword,
+    public ResponseEntity<String> updateUserForUsers(UserRequestWithoutPassword userRequest,
                                                      HttpServletRequest request) {
         String userName = (String) request.getAttribute("username");
         User user = userRepository.findByUsernameEquals(userName);
 
         methodHelper.checkBuiltIn(user);
+        uniquePropertyValidator.checkUniqueProperties(user, userRequest);
 
+        user.setUsername(userRequest.getUsername());
+        user.setBirthDay(userRequest.getBirthDay());
+        user.setEmail(userRequest.getEmail());
+        user.setPhoneNumber(userRequest.getPhoneNumber());
+        user.setBirthPlace(userRequest.getBirthPlace());
+        user.setGender(userRequest.getGender());
+        user.setName(userRequest.getName());
+        user.setSurname(userRequest.getSurname());
+        user.setSsn(userRequest.getSsn());
+
+        userRepository.save(user);
+
+        String message = SuccessMessages.USER_UPDATE;
+        return ResponseEntity.ok(message);
+    }
+
+    public List<UserResponse> getUserByName(String name) {
+
+        return userRepository.getUserByNameContaining(name) // List<User>
+                .stream() // stream<User>
+                .map(userMapper::mapUserToUserResponse) // stream<UserResponse>
+                .collect(Collectors.toList()); // List<UserResponse>
     }
 }
