@@ -11,5 +11,9 @@ public class SuccessMessages {
     public static final String USER_DELETE = "User is Deleted Successfully";
     public static final String USER_UPDATE = "Your information has been updated successfully ";
     public static final String USER_UPDATE_MESSAGE = "User is Updated Successfully";
+    public static final String CUSTOMER_SAVED = "Customer is Saved Successfully";
+    public static final String CUSTOMER_UPDATE = "Customer is updated successfully ";
+
+
 
 }

@@ -2,6 +2,7 @@ package com.project.payload.mappers;
 
 import com.project.entity.concretes.user.User;
 import com.project.payload.request.abstracts.BaseUserRequest;
+import com.project.payload.request.user.CustomerRequest;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.response.user.CustomerResponse;
 import com.project.payload.response.user.GuestCustomerResponse;
@@ -89,6 +90,42 @@ public class UserMapper {
                 .phoneNumber(userRequest.getPhoneNumber())
                 .gender(userRequest.getGender())
                 .email(userRequest.getEmail())
+                .build();
+    }
+
+    public User mapCustomerRequestToUser(CustomerRequest customerRequest) {
+        return User.builder()
+                .name(customerRequest.getName())
+                .surname(customerRequest.getSurname())
+                .ssn(customerRequest.getSsn())
+                .username(customerRequest.getUsername())
+                .birthDay(customerRequest.getBirthDay())
+                .birthPlace(customerRequest.getBirthPlace())
+                .password(customerRequest.getPassword())
+                .phoneNumber(customerRequest.getPhoneNumber())
+                .email(customerRequest.getEmail())
+                .built_in(customerRequest.getBuiltIn())
+                .gender(customerRequest.getGender())
+                .address(customerRequest.getAddress())
+                .bankCard(customerRequest.getBankCard())
+                .build();
+    }
+    public User mapCustomerRequestToUpdatedUser(CustomerRequest customerRequest, Long userId) {
+        return User.builder()
+                .id(userId)
+                .name(customerRequest.getName())
+                .surname(customerRequest.getSurname())
+                .ssn(customerRequest.getSsn())
+                .username(customerRequest.getUsername())
+                .birthDay(customerRequest.getBirthDay())
+                .birthPlace(customerRequest.getBirthPlace())
+                .password(customerRequest.getPassword())
+                .phoneNumber(customerRequest.getPhoneNumber())
+                .email(customerRequest.getEmail())
+                .built_in(customerRequest.getBuiltIn())
+                .gender(customerRequest.getGender())
+                .address(customerRequest.getAddress())
+                .bankCard(customerRequest.getBankCard())
                 .build();
     }
 }
